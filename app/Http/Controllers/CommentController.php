@@ -25,7 +25,7 @@ class CommentController extends Controller
      */
     public function store(StoreComment $comment): CommentResource
     {
-        sleep(10);
+
 
         Comment::create($comment->all());
         return new CommentResource($comment);

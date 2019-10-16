@@ -45,4 +45,12 @@ class Post extends Model
         return $count;
     }
 
+    public static function increaseUserMaxPosts()
+    {
+        $user_id = Auth::id();
+        $user = UserPostCount::where('user_id', $user_id)->get();
+        dd($user);
+        return response(['message' => 'User post has been increase']);
+    }
+
 }

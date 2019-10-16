@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewUserHasRegisterEvent;
 use App\Http\Requests\User\StoreUser;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserResourceCollection;
+use App\Mail\WelcomeNewUserMail;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -17,11 +20,13 @@ class UserController extends Controller
     public function register()
     {
         $register_user = request()->all();
-//        $register_user['password'] = Hash::make(request()->password);
         $register_user['password'] = bcrypt(request()->password);
         $user = User::create($register_user);
         $success['token'] = $user->createToken('MyApp')->accessToken;
         $success['name'] = $user->name;
+
+        event(new NewUserHasRegisterEvent($register_user));
+
         return response()->json(['success' => $success]);
 
     }

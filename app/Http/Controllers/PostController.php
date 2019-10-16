@@ -23,6 +23,7 @@ class PostController extends Controller
      */
     public function index(): PostsResourceCollection
     {
+        dd(Post::increaseUserMaxPosts());
         return new PostsResourceCollection(Post::paginate());
     }
 
@@ -32,18 +33,16 @@ class PostController extends Controller
      */
     public function store(StorePost $storePost): PostsResource
     {
-//        dd($storePost->title);
         $user_id = Auth::user()->id;
         $counter = Post::postCount($user_id);
-//        dd($counter);
         if ($counter >= 10) {
 //            return response(['message' => 'you are reach maximum number of posts for this month']);
             return new PostsResource(['message' => 'you are reach maximum number of posts for this month']);
         } else {
             $add_user_id = \request()->all();
             $add_user_id['user_id'] = $user_id;
-//            dd($add_user_id);
             Post::create($add_user_id);
+
             return new PostsResource($storePost);
         }
     }
